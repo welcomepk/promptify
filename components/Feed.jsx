@@ -1,6 +1,20 @@
 'use client';
 import { useState, useEffect } from "react";
-import PromptCardList from "./PromptCardList";
+import PromptCard from "./PromptCard";
+
+const PromptCardList = ({ data, handleTagClick }) => {
+    return (
+        <div className='mt-16 prompt_layout'>
+            {data.map((post) => (
+                <PromptCard
+                    key={post._id}
+                    post={post}
+                    handleTagClick={handleTagClick}
+                />
+            ))}
+        </div>
+    );
+};
 
 const Feed = () => {
 
@@ -9,28 +23,26 @@ const Feed = () => {
     const [isLoading, setIsLoading] = useState(false);
 
     // fetching all prompts
+    const fetchPosts = async () => {
+        setIsLoading(true);
+        const response = await fetch("/api/prompt?timestamp" + Date.now());
+        const data = await response.json();
+        console.log(data);
+        setPrompts(data);
+        setIsLoading(false);
+    };
+
     useEffect(() => {
-        const fetchPrompts = async () => {
-            try {
-                setIsLoading(true)
-                const response = await fetch("/api/prompt");
-                const data = await response.json();
-                setPrompts(data);
-            } catch (error) {
-                console.log(error)
-            } finally {
-                setIsLoading(false);
-            }
-        }
-
-        fetchPrompts();
-
+        console.log("render feed");
+        fetchPosts();
     }, []);
 
     const handleSearchChange = (e) => {
 
     }
+    const handleTagClick = async () => {
 
+    }
     return (
         <section className="feed">
             <form className="relative w-full flex-center">
@@ -43,16 +55,26 @@ const Feed = () => {
                     className="search_input peer" />
             </form>
 
+
             {
-                isLoading ? "Loading..." : (
-                    <PromptCardList
-                        prompts={prompts}
-                        handleTagClick={() => { }}
-                    />)
+                isLoading
+                    ? "Loading..."
+                    : (
+                        <PromptCardList
+                            data={prompts}
+                            handleTagClick={handleTagClick}
+                        />
+                    )
             }
 
         </section>
     )
 }
+
+// Feed.getInitialProps = async () => {
+//     const response = await fetch("/api/prompt?timestamp=" + Date.now(), { cache: 'no-cache' });
+//     const data = await response.json();
+//     return { prompts: data };
+// };
 
 export default Feed
