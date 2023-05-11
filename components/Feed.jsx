@@ -22,6 +22,7 @@ const Feed = () => {
     const [prompts, setPrompts] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
 
+    console.log("Feed 👋");
     // fetching all prompts
     const fetchPosts = async () => {
         setIsLoading(true);
@@ -33,7 +34,6 @@ const Feed = () => {
     };
 
     useEffect(() => {
-        console.log("render feed");
         fetchPosts();
     }, []);
 
@@ -54,7 +54,6 @@ const Feed = () => {
                     required
                     className="search_input peer" />
             </form>
-
 
             {
                 isLoading
