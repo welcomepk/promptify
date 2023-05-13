@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from "react";
 import PromptCard from "./PromptCard";
-
+import axios from "axios";
 const PromptCardList = ({ data, handleTagClick }) => {
     return (
         <div className='mt-16 prompt_layout'>
@@ -16,13 +16,17 @@ const PromptCardList = ({ data, handleTagClick }) => {
     );
 };
 
+const fetchData = async () => {
+    const response = await axios.get("/api/prompt?timestamp" + Date.now());
+    return response.data;
+};
+
 const Feed = () => {
 
     const [searchText, setSearchText] = useState('');
     const [prompts, setPrompts] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
 
-    console.log("Feed 👋");
     // fetching all prompts
     const fetchPosts = async () => {
         setIsLoading(true);
@@ -34,7 +38,11 @@ const Feed = () => {
     };
 
     useEffect(() => {
-        fetchPosts();
+        console.log("Feed 👋");
+        // fetchPosts();
+        fetchData().then((newData) => {
+            setPrompts(newData);
+        });
     }, []);
 
     const handleSearchChange = (e) => {
@@ -69,11 +77,5 @@ const Feed = () => {
         </section>
     )
 }
-
-// Feed.getInitialProps = async () => {
-//     const response = await fetch("/api/prompt?timestamp=" + Date.now(), { cache: 'no-cache' });
-//     const data = await response.json();
-//     return { prompts: data };
-// };
 
 export default Feed
